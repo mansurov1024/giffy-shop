@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  auth-server:
+    image: auth-server:latest
+    pull_policy: if_not_present
+    container_name: auth-server
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    networks:
+      - app-network
+
+  rest-api:
+    image: rest-api:latest
+    container_name: rest-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+
+  web-app:
+    image: web-app:latest
+    container_name: web-app
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - $PWD/mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+
+  redis:
+    container_name: redis
+    image: redis
+    volumes:
+      - $PWD/redis-data:/var/lib/redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
